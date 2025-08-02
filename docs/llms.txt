@@ -1,0 +1,61 @@
+# UniFi Protect Exporter Documentation
+
+## About
+This documentation site covers the UniFi Protect Exporter, a high-performance Prometheus exporter for UniFi Protect systems with comprehensive monitoring capabilities and OpenTelemetry support.
+
+## Site Structure
+
+### Main Documentation
+- `/` - Project overview and quick start guide
+- `/getting-started/` - Installation and setup instructions
+- `/config/` - Complete configuration reference with environment variables
+- `/deployment-operations/` - Production deployment and operations guide
+- `/integration-dashboards/` - Prometheus and Grafana integration examples
+
+### Metrics Documentation
+- `/metrics/` - Metrics reference index
+- `/metrics/overview/` - High-level metrics overview and categories
+- `/metrics/metrics/` - Complete detailed metrics reference
+
+### Collector System
+- `/collectors/` - Comprehensive collector reference
+- `/extending-collectors/` - Guide for adding new metric collectors
+
+### Architecture & Development
+- `/adr/` - Architecture Decision Records
+- `/adr/001-collector-architecture/` - Collector hierarchy and update tiers
+- `/adr/002-error-handling-strategy/` - Error handling patterns
+- `/patterns/` - Development patterns and best practices
+
+## Key Features
+- **Multi-tier collection system**: Fast (60s), Medium (300s), Slow (900s) update intervals
+- **Specialized collectors**: Camera metrics, motion events, recording statistics, system health
+- **Comprehensive metrics**: NVR status, camera health, storage usage, motion detection
+- **OpenTelemetry support**: Full observability with traces, metrics, and logs
+- **Production-ready**: Docker container, health checks, error handling, connection management
+
+## API Reference
+The exporter collects metrics from:
+- NVR system APIs (storage, CPU, memory usage)
+- Camera-specific APIs (status, recording, motion detection)
+- Event APIs (motion events, smart detections)
+- System health APIs
+
+## Configuration
+All configuration via environment variables with format: `UNIFI_PROTECT_EXPORTER_{SECTION}__{SETTING}`
+
+## Technology Stack
+- **Language**: Python 3.11+ with asyncio
+- **Metrics**: Prometheus metrics with OpenTelemetry export
+- **API**: UniFi Protect API via uiprotect SDK
+- **Deployment**: Docker containers, Kubernetes support
+- **Documentation**: MkDocs with Material theme
+
+## Target Audience
+- DevOps engineers implementing UniFi Protect monitoring
+- Security administrators managing video surveillance infrastructure
+- Site reliability engineers building observability systems
+- Developers extending the collector system
+
+## License
+Open source project with comprehensive documentation for production deployment and extension.

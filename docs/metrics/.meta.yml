@@ -1,0 +1,13 @@
+title: Metrics Reference - Unifi Protect Exporter
+description: Complete reference of all Prometheus metrics collected by the Unifi Protect Exporter, including device metrics, network health, environmental sensors, and alerts
+
+tags:
+  - metrics
+  - prometheus
+  - telemetry
+  - observability
+  - monitoring
+  - unifi-protect
+
+# Additional keywords for this section
+keywords: prometheus metrics, Unifi Protect telemetry, network monitoring metrics, device metrics, environmental sensors, wireless metrics

@@ -1,0 +1,34 @@
+# UniFi Protect Prometheus Exporter
+#
+# Quick Start:
+# 1. Copy .env.example to .env
+# 2. Update UniFi Protect credentials in .env:
+#    - UNIFI_PROTECT_EXPORTER_UNIFI__HOST
+#    - UNIFI_PROTECT_EXPORTER_UNIFI__USERNAME
+#    - UNIFI_PROTECT_EXPORTER_UNIFI__PASSWORD
+# 3. Run: docker-compose up -d
+# 4. Access metrics at: http://localhost:9099/metrics
+
+services:
+  unifi_protect_exporter:
+    image: ghcr.io/rknightion/unifi-protect-exporter:latest
+    container_name: unifi-protect-exporter
+    restart: unless-stopped
+    ports:
+      - "${UNIFI_PROTECT_EXPORTER_SERVER__PORT:-9099}:${UNIFI_PROTECT_EXPORTER_SERVER__PORT:-9099}"
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:${UNIFI_PROTECT_EXPORTER_SERVER__PORT:-9099}/health').raise_for_status()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    user: "1000:1000"
+
+networks:
+  default:
+    driver: bridge

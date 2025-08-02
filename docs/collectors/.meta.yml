@@ -1,0 +1,13 @@
+title: Collector Reference - Unifi Protect Exporter
+description: Comprehensive reference of all 27+ metric collectors in the Unifi Protect Exporter, including device-specific collectors and collection strategies
+
+tags:
+  - collectors
+  - data-collection
+  - api
+  - unifi-protect
+  - monitoring
+  - prometheus
+
+# Additional keywords for this section
+keywords: data collectors, Unifi Protect api, metric collection, device collectors, network health collectors, sensor collectors

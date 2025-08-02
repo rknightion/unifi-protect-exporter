@@ -1,0 +1,232 @@
+# TODOS.txt - UniFi Protect Exporter Future Development
+
+This file contains detailed information about future development tasks for the UniFi Protect Exporter.
+It is intended primarily for LLM/Claude Code consumption to provide context for future sessions.
+
+## IMMEDIATE TASKS (High Priority)
+
+### 1. Create UniFi Protect Connection Framework
+STATUS: NOT STARTED
+LOCATION: src/unifi_protect_exporter/api/
+DETAILS:
+- Create api/client.py wrapper around ProtectApiClient from uiprotect SDK
+- Implement connection management with retry logic
+- Handle authentication and SSL certificate verification
+- Create bootstrap data caching mechanism
+- Implement WebSocket connection for real-time events
+- Add connection pooling for multiple NVRs (future)
+- Reference pattern: AsyncUniFiProtectClient in src/unifi_protect_exporter/api/client.py
+QUESTIONS FOR USER:
+- Should we support multiple NVR connections in a single exporter instance?
+- What authentication methods should be prioritized (local user vs cloud)?
+
+### 2. Implement Camera Count Metric
+STATUS: NOT STARTED
+LOCATION: src/unifi_protect_exporter/collectors/system.py
+DETAILS:
+- Create SystemCollector class following the collector pattern
+- Implement unifi_protect_cameras_total metric
+- Add proper labels (nvr_id, nvr_name)
+- Use UpdateTier.SLOW (900s) for this metric
+- Reference pattern: SystemCollector in src/unifi_protect_exporter/collectors/system.py
+IMPLEMENTATION NOTES:
+```python
+@register_collector(UpdateTier.SLOW)
+class SystemCollector(MetricCollector):
+    def _initialize_metrics(self) -> None:
+        self._cameras_total = self._create_gauge(
+            MetricName.CAMERAS_TOTAL,
+            "Total number of cameras connected to the UniFi Protect system"
+        )
+```
+
+### 3. Create Core Directory Structure
+STATUS: NOT STARTED
+LOCATION: src/unifi_protect_exporter/
+DETAILS:
+- Create directories matching the architecture:
+  - core/ (infrastructure, config, metrics, error handling)
+  - collectors/ (main collectors)
+  - collectors/cameras/ (camera-specific collectors)
+  - collectors/system_collectors/ (system health collectors)
+  - collectors/motion_collectors/ (motion event collectors)
+  - api/ (UniFi Protect API wrapper)
+  - models/ (Pydantic models for API responses)
+  - services/ (shared services like event processing)
+  - templates/ (Jinja2 templates for web UI)
+  - tools/ (documentation generators)
+  - utils/ (utility functions)
+
+### 4. Implement Core Infrastructure
+STATUS: NOT STARTED
+LOCATION: src/unifi_protect_exporter/core/
+DETAILS:
+- Copy and adapt from reference project:
+  - config.py - Configuration management with Pydantic
+  - config_models.py - Configuration model definitions
+  - metrics.py - Metric creation and management
+  - error_handling.py - Error handling decorators
+  - logging.py - Structured logging setup
+  - collector.py - Base collector class
+  - registry.py - Collector registry
+  - constants/ directory with all constant definitions
+- Ensure all naming conventions follow UniFi Protect standards
+- Add UniFi Protect specific configuration options
+
+## MEDIUM PRIORITY TASKS
+
+### 5. Implement Basic Collectors
+STATUS: NOT STARTED
+DETAILS:
+- CameraCollector - Camera status, recording state, health metrics
+- MotionCollector - Motion event processing and metrics
+- RecordingCollector - Recording statistics and quality metrics
+- SystemHealthCollector - NVR CPU, memory, storage metrics
+
+### 6. Create Metric Constants
+STATUS: NOT STARTED
+LOCATION: src/unifi_protect_exporter/core/constants/metrics_constants.py
+DETAILS:
+- Define MetricName enum with all metric names
+- Define LabelName enum with all label names
+- Follow pattern from reference project
+- Example metrics:
+  - CAMERAS_TOTAL
+  - CAMERA_UP
+  - CAMERA_RECORDING_ENABLED
+  - MOTION_EVENTS_TOTAL
+  - STORAGE_USED_BYTES
+  - STORAGE_TOTAL_BYTES
+
+### 7. Implement Domain Models
+STATUS: NOT STARTED
+LOCATION: src/unifi_protect_exporter/models/
+DETAILS:
+- Create Pydantic models for UniFi Protect API responses
+- Bootstrap model for initial data
+- Camera model with all properties
+- Event model for motion/smart detection events
+- NVR system model
+- Use strict validation and proper typing
+
+### 8. Create Test Infrastructure
+STATUS: NOT STARTED
+LOCATION: tests/
+DETAILS:
+- Set up test factories for mock data
+- Create mock UniFi Protect API responses
+- Implement test helpers for metric assertions
+- Add integration tests for collectors
+- Reference: tests/ directory in reference project
+
+## LOW PRIORITY / FUTURE ENHANCEMENTS
+
+### 9. Advanced Collectors
+- SmartDetectionCollector - Person, vehicle, package detection metrics
+- ZoneCollector - Motion zones and zone-specific metrics
+- UserCollector - User activity and access metrics
+- AlertCollector - UniFi Protect alerts and notifications
+
+### 10. WebSocket Event Processing
+- Real-time motion event processing
+- Camera status change notifications
+- Recording state changes
+- System alerts
+
+### 11. Grafana Dashboards
+- System Overview Dashboard
+- Camera Status Dashboard
+- Motion Analytics Dashboard
+- Recording Quality Dashboard
+- Storage Utilization Dashboard
+
+### 12. Documentation Generators
+- Metrics documentation generator
+- Configuration documentation generator
+- Collector documentation generator
+- All following patterns from reference project
+
+### 13. Performance Optimizations
+- Implement caching for bootstrap data
+- Add request batching for multiple cameras
+- Optimize metric collection cycles
+- Add metric cardinality controls
+
+### 14. Additional Features
+- Multi-NVR support
+- Cloud API support (UniFi Cloud)
+- Historical data backfill
+- Webhook support for alerts
+- Custom metric definitions via config
+
+## QUESTIONS REQUIRING USER INPUT
+
+1. Authentication Strategy:
+   - Should we support UniFi Cloud authentication?
+   - Local-only authentication sufficient for v1?
+   - API key support needed?
+
+2. Feature Scope:
+   - Which camera models should be prioritized?
+   - Smart detection metrics required for v1?
+   - Historical data collection needed?
+
+3. Configuration:
+   - Should camera filtering be supported (by name, model, location)?
+   - Custom label support needed?
+   - Metric name prefixing options?
+
+4. Performance:
+   - Expected number of cameras per deployment?
+   - Real-time event processing priority?
+   - Acceptable latency for metrics?
+
+## IMPLEMENTATION ORDER RECOMMENDATION
+
+1. Core infrastructure (config, logging, metrics, error handling)
+2. UniFi Protect API client wrapper
+3. Basic SystemCollector with camera count metric
+4. CameraCollector for camera status metrics
+5. Test infrastructure and initial tests
+6. MotionCollector for event metrics
+7. Documentation and examples
+8. Grafana dashboards
+9. Advanced features
+
+## ARCHITECTURAL DECISIONS NEEDED
+
+1. WebSocket vs Polling:
+   - Use WebSocket for real-time events?
+   - Fallback to polling if WebSocket fails?
+   - Hybrid approach with both?
+
+2. Data Storage:
+   - Cache bootstrap data between restarts?
+   - Store historical motion events?
+   - Persist camera configuration?
+
+3. Multi-Instance:
+   - Support multiple NVRs per exporter?
+   - Separate exporters per NVR?
+   - Federation strategy?
+
+## REFERENCES
+
+- UniFi Protect SDK: https://uiprotect.readthedocs.io/
+- Reference Architecture: Prometheus exporter pattern with three-tier update system
+- Prometheus Best Practices: https://prometheus.io/docs/practices/
+- OpenTelemetry Specifications: https://opentelemetry.io/docs/
+
+## COMPLETION TRACKING
+
+Use this section to track completion of tasks in future sessions:
+- [ ] Core infrastructure setup
+- [ ] API client implementation
+- [ ] Basic camera count metric
+- [ ] Camera status collector
+- [ ] Motion event collector
+- [ ] Test suite creation
+- [ ] Documentation generation
+- [ ] Docker image optimization
+- [ ] Grafana dashboards
+- [ ] Production deployment guide
